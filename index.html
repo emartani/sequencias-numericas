@@ -90,10 +90,23 @@
     }
   </style>
 </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WWGWM9FZ9Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WWGWM9FZ9Q');
+</script>
+
 <body>
   <h1>Complete a Sequência</h1>
   <div id="instruction" class="instruction"></div>
-  <div class="score">Fase: <span id="level">1</span> | Pontos: <span id="points">0</span></div>
+  <div class="score">
+    Fase: <span id="level">1</span> | Pontos: <span id="points">0</span> | Vidas: <span id="lives">3</span>
+  </div>
 
   <div class="sequence" id="sequence"></div>
   <div class="options" id="options"></div>
@@ -103,6 +116,7 @@
   <script>
     let level = 1;
     let points = 0;
+    let lives = 3;
     let sequence = [];
     let missingIndex;
     let orderType;
@@ -113,6 +127,7 @@
     const feedbackEl = document.getElementById("feedback");
     const levelEl = document.getElementById("level");
     const pointsEl = document.getElementById("points");
+    const livesEl = document.getElementById("lives");
     const restartBtn = document.getElementById("restartBtn");
 
     function playSound(type) {
@@ -148,20 +163,18 @@
     }
 
     function setupPhase(){
-      const count = level===1?5:(level===2?7:10);
+      const count = 6; // sempre 6 números
       orderType = Math.random()<0.5?"crescente":"decrescente";
       instructionEl.textContent = "Complete a sequência em ordem "+orderType.toUpperCase();
 
-      // gerar sequência base
-      const start = Math.floor(Math.random()*20);
-      const step = Math.floor(Math.random()*5)+1;
+      // dificuldade aumenta com a fase
+      const start = Math.floor(Math.random()*20 + level*5);
+      const step = Math.floor(Math.random()*3 + level); // passo maior em fases avançadas
       sequence = Array.from({length:count},(_,i)=>start+i*step);
       if(orderType==="decrescente") sequence.reverse();
 
-      // escolher índice faltante
       missingIndex = Math.floor(Math.random()*count);
 
-      // montar UI
       sequenceEl.innerHTML="";
       sequence.forEach((num,i)=>{
         const slot=document.createElement("div");
@@ -188,9 +201,9 @@
       feedbackEl.textContent="";
       levelEl.textContent = level;
       pointsEl.textContent = points;
+      livesEl.textContent = lives;
     }
 
-    // Drag & drop na área da sequência
     sequenceEl.addEventListener("dragover",e=>e.preventDefault());
     sequenceEl.addEventListener("drop",e=>{
       e.preventDefault();
@@ -201,7 +214,7 @@
         points+=10;
         pointsEl.textContent=points;
         feedbackEl.textContent="🎉 Correto!";
-        if(level<3){
+                if(level<5){
           level++;
           levelEl.textContent=level;
           setTimeout(setupPhase,1500);
@@ -212,23 +225,25 @@
         }
       } else {
         playSound("wrong");
+        lives--;
+        livesEl.textContent = lives;
         feedbackEl.textContent="❌ Ops! Número errado!";
+        if(lives<=0){
+          feedbackEl.textContent="💀 Game Over! Clique em Reiniciar para tentar novamente.";
+        }
       }
     });
 
     function restartGame(){
-      level=1; points=0;
+      level=1; points=0; lives=3;
       levelEl.textContent=level;
       pointsEl.textContent=points;
+      livesEl.textContent=lives;
       setupPhase();
     }
-    // Garantir disponibilidade global para casos de onclick inline (se usado)
-    window.restartGame = restartGame;
-
-    // Preferir listener de botão em vez de onclick inline
     restartBtn.addEventListener("click", restartGame);
 
-    // iniciar
+    // iniciar jogo
     setupPhase();
   </script>
 </body>
