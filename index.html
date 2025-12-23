@@ -113,19 +113,28 @@
     }
 
     /* Ajuste para telas pequenas */
+    /* Ajuste para telas pequenas */
     @media (max-width: 600px) {
     .sequence {
-        flex-wrap: nowrap;       /* não quebrar linha */
-        overflow-x: auto;        /* permite rolagem horizontal */
-        justify-content: flex-start; /* alinha à esquerda */
+    display: flex;
+    justify-content: center;   /* mantém todos centralizados */
+    flex-wrap: nowrap;         /* uma única linha */
+    width: 100%;
     }
-    .slot {
-        font-size: 1em;          /* fonte menor */
-        padding: 8px;            /* menos espaço interno */
-        min-width: 40px;         /* largura menor */
-        margin: 4px;             /* margens menores */
-    }
+
+  .slot {
+    width: 40px;        /* largura menor */
+    height: 40px;       /* altura menor */
+    min-width: unset;   /* remove o mínimo definido antes */
+    min-height: unset;  /* remove o mínimo definido antes */
+    font-size: 1.2em;   /* reduz a fonte */
+    padding: 4px;       /* menos espaço interno */
+    margin: 2px;        /* margens menores */
+  }
 }
+
+
+    
 
   </style>
 </head>
