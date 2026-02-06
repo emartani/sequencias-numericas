@@ -17,7 +17,7 @@
       color: #fff;
       text-shadow: 3px 3px #000;
       margin: 16px 0;
-      font-size: 2.2em;
+      font-size: 1.5em;
     }
     .instruction {
       font-size: 2em;
@@ -159,7 +159,7 @@
   <div class="score">
     Fase: <span id="level">1</span> | Pontos: <span id="points">0</span> | Vidas: <span id="lives">3</span>
   </div>
-
+  <h1>Escolha entre as bolas verdes o número que completa a sequência!</h1>
   <div class="sequence" id="sequence"></div>
   <div class="options" id="options"></div>
   <div class="feedback" id="feedback"></div>
@@ -221,7 +221,7 @@
 
       // dificuldade aumenta com a fase
       const start = Math.floor(Math.random()*20 + level*5);
-      const step = Math.floor(Math.random()*3 + level); // passo maior em fases avançadas
+      const step = Math.floor(Math.random()*3 + level); 
       sequence = Array.from({length:count},(_,i)=>start+i*step);
       if(orderType==="decrescente") sequence.reverse();
 
@@ -245,8 +245,8 @@
         const div=document.createElement("div");
         div.textContent=num;
         div.className="number";
-        div.draggable=true;
-        div.addEventListener("dragstart",e=>e.dataTransfer.setData("text/plain",String(num)));
+        // agora usamos clique
+        div.addEventListener("click", () => checkAnswer(num));
         optionsEl.appendChild(div);
       });
 
@@ -256,22 +256,20 @@
       livesEl.textContent = lives;
     }
 
-    sequenceEl.addEventListener("dragover",e=>e.preventDefault());
-    sequenceEl.addEventListener("drop",e=>{
-      e.preventDefault();
-      const num=parseInt(e.dataTransfer.getData("text/plain"),10);
-      if(num===sequence[missingIndex]){
-        sequenceEl.children[missingIndex].textContent=num;
+    function checkAnswer(num) {
+      if(num === sequence[missingIndex]){
+        sequenceEl.children[missingIndex].textContent = num;
         playSound("correct");
-        points+=10;
-        pointsEl.textContent=points;
-        feedbackEl.textContent="🎉 Correto!";
-                if(level<5){
+        points += 10;
+        pointsEl.textContent = points;
+        feedbackEl.textContent = "🎉 Correto!";
+        
+        if(level < 5){
           level++;
-          levelEl.textContent=level;
-          setTimeout(setupPhase,1500);
+          levelEl.textContent = level;
+          setTimeout(setupPhase, 1500);
         } else {
-          feedbackEl.textContent="🏆 Parabéns! Você completou todas as fases!";
+          feedbackEl.textContent = "🏆 Parabéns! Você completou todas as fases!";
           playSound("win");
           launchFireworks();
         }
@@ -279,12 +277,12 @@
         playSound("wrong");
         lives--;
         livesEl.textContent = lives;
-        feedbackEl.textContent="❌ Ops! Número errado!";
-        if(lives<=0){
-          feedbackEl.textContent="💀 Game Over! Clique em Reiniciar para tentar novamente.";
+        feedbackEl.textContent = "❌ Ops! Número errado!";
+        if(lives <= 0){
+          feedbackEl.textContent = "💀 Game Over! Clique em Reiniciar para tentar novamente.";
         }
       }
-    });
+    }
 
     function restartGame(){
       level=1; points=0; lives=3;
@@ -299,4 +297,7 @@
     setupPhase();
   </script>
 </body>
+
+
+
 </html>
